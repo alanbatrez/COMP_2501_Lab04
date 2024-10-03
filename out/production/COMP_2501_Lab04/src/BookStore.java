@@ -12,7 +12,6 @@ public final class BookStore
 {
     private final String name;
     private final ArrayList<Novel> novels = new ArrayList<>();
-
     /**
      * Constructs a new BookStore object.
      *
@@ -231,26 +230,30 @@ public final class BookStore
      *
      * @param length the length of the title
      */
-    public void printTitlesOfLength(final int length)
-    {
-        for (final Novel novel : novels)
+    public void printTitlesOfLength(final int length) throws IllegalArgumentException {
         {
-            if (novel == null)
-            {
-                continue;
+            if(length > 0){
+
+                for (final Novel novel : novels) {
+                    if (novel == null) {
+                        continue;
+                    }
+                    final String title = novel.getTitle();
+                    if (title == null) {
+                        continue;
+                    }
+                    if (title.length() != length) {
+                        continue;
+                    }
+                    System.out.println(title);
+                }
+
+            } else {
+                throw new IllegalArgumentException("Bad Length");
             }
-            final String title = novel.getTitle();
-            if (title == null)
-            {
-                continue;
-            }
-            if (title.length() != length)
-            {
-                continue;
-            }
-            System.out.println(title);
         }
     }
+
 
     /**
      * Prints author names that start or end with the specified substring.
@@ -258,24 +261,25 @@ public final class BookStore
      * @param substring the substring to check for at the start or
      *                  end of the author name
      */
-    public void printNameStartsEndsWith(final String substring)
+    public void printNameStartsEndsWith(final String substring) throws IllegalNameException
     {
-        for (final Novel novel : novels)
-        {
-            if (novel == null)
-            {
-                continue;
+        if(substring != null && !substring.isEmpty()) {
+            for (final Novel novel : novels) {
+                if (novel == null) {
+                    continue;
+                }
+                final String author = novel.getAuthor();
+                if (author == null) {
+                    continue;
+                }
+                if (!startsEndsWith(author, substring)) {
+                    continue;
+                }
+                System.out.println(author.toLowerCase());
             }
-            final String author = novel.getAuthor();
-            if (author == null)
-            {
-                continue;
-            }
-            if (!startsEndsWith(author, substring))
-            {
-                continue;
-            }
-            System.out.println(author.toLowerCase());
+
+        } else {
+            throw new IllegalNameException("Bad Name");
         }
     }
 
@@ -364,6 +368,7 @@ public final class BookStore
      */
     public static void main(final String[] args)
     {
+
         if (args.length <= 0)
         {
             System.out.println("Please provide the bookstore name as the first " +
@@ -378,9 +383,13 @@ public final class BookStore
         System.out.println("\nTitles containing 'the':");
         store.printTitlesContaining("the", false);
         System.out.println("\nTitles of length 13:");
-        store.printTitlesOfLength(13);
+        store.printTitlesOfLength(15);
         System.out.println("\nNames starting or ending with 'an':");
-        store.printNameStartsEndsWith("an");
+        try {
+            store.printNameStartsEndsWith("");
+        } catch (IllegalNameException e) {
+            System.out.println(e.getMessage());
+        }
         System.out.println("\nLongest author: " + store.getLongest("author"));
         System.out.println("\nLongest title: " + store.getLongest("title"));
     }

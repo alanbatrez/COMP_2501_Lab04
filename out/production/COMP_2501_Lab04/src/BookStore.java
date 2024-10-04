@@ -180,23 +180,25 @@ public final class BookStore
      *                      case-insensitive
      */
     public void printTitlesContaining(final String substring,
-                                      final boolean caseSensitive)
+                                      final boolean caseSensitive) throws IllegalArgumentException
     {
-        for (final Novel novel : novels)
-        {
-            if (novel == null)
-            {
-                continue;
+        if(substring != null && !substring.isEmpty()) {
+
+            for (final Novel novel : novels) {
+                if (novel == null) {
+                    continue;
+                }
+                final String title = novel.getTitle();
+                if (title == null) {
+                    continue;
+                }
+                if (needsToPrint(title, substring, caseSensitive)) {
+                    System.out.println(title);
+                }
             }
-            final String title = novel.getTitle();
-            if (title == null)
-            {
-                continue;
-            }
-            if (needsToPrint(title, substring, caseSensitive))
-            {
-                System.out.println(title);
-            }
+        }
+        else{
+            throw new IllegalArgumentException("bad string");
         }
     }
 
@@ -301,15 +303,19 @@ public final class BookStore
      * @return the longest author name or title, or null if the property is
      * invalid
      */
-    public String getLongest(final String property)
+    public String getLongest(final String property) throws IllegalNovelPropertyException
     {
-        if (property.equalsIgnoreCase("author"))
-        {
-            return getLongestAuthor();
+        if(property.equalsIgnoreCase("author") || property.equalsIgnoreCase("title")) {
+            if (property.equalsIgnoreCase("author")) {
+                return getLongestAuthor();
+            }
+            if (property.equalsIgnoreCase("title")) {
+                return getLongestTitle();
+            }
         }
-        if (property.equalsIgnoreCase("title"))
+        else
         {
-            return getLongestTitle();
+            throw new IllegalNovelPropertyException("bad property");
         }
         return null;
     }
@@ -381,16 +387,30 @@ public final class BookStore
         System.out.println("\nAll titles:");
         store.printAllTitles();
         System.out.println("\nTitles containing 'the':");
-        store.printTitlesContaining("the", false);
+        try {
+            store.printTitlesContaining("", false);
+        }catch (IllegalArgumentException a){
+            System.out.println(a.getMessage());
+        }
         System.out.println("\nTitles of length 13:");
-        store.printTitlesOfLength(15);
+        try {
+            store.printTitlesOfLength(13);
+        }
+        catch (IllegalArgumentException b){
+            System.out.println(b.getMessage());
+        }
         System.out.println("\nNames starting or ending with 'an':");
         try {
             store.printNameStartsEndsWith("");
         } catch (IllegalNameException e) {
             System.out.println(e.getMessage());
         }
-        System.out.println("\nLongest author: " + store.getLongest("author"));
+        try{
+        System.out.println("\nLongest author: " + store.getLongest("Author"));
         System.out.println("\nLongest title: " + store.getLongest("title"));
+        } catch (IllegalNovelPropertyException a)
+        {
+            System.out.println(a.getMessage());
+        }
     }
 }

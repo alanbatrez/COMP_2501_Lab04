@@ -231,26 +231,24 @@ public final class BookStore
      *
      * @param length the length of the title
      */
-    public void printTitlesOfLength(final int length)
-    {
-        for (final Novel novel : novels)
+    public void printTitlesOfLength(final int length) throws IllegalArgumentException {
         {
-            if (novel == null)
-            {
-                continue;
+            for (final Novel novel : novels) {
+                if (novel == null) {
+                    continue;
+                }
+                final String title = novel.getTitle();
+                if (title == null) {
+                    continue;
+                }
+                if (title.length() != length) {
+                    continue;
+                }
+                System.out.println(title);
             }
-            final String title = novel.getTitle();
-            if (title == null)
-            {
-                continue;
-            }
-            if (title.length() != length)
-            {
-                continue;
-            }
-            System.out.println(title);
         }
     }
+
 
     /**
      * Prints author names that start or end with the specified substring.
